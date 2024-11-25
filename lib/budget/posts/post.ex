@@ -4,7 +4,7 @@ defmodule Budget.Posts.Post do
 
   schema "posts" do
     field :title, :string
-    field :body, :string
+    field :valor, :decimal
 
     timestamps(type: :utc_datetime)
   end
@@ -12,7 +12,7 @@ defmodule Budget.Posts.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :body])
-    |> validate_required([:title, :body])
+    |> cast(attrs, [:title, :valor])
+    |> validate_required([:title, :valor])
   end
 end
