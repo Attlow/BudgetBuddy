@@ -5,7 +5,12 @@ defmodule BudgetWeb.PostController do
   alias Budget.Posts.Post
 
   def index(conn, _params) do
-    posts = Posts.list_posts()
+    # Pegar o ID do usuário autenticado
+    user_id = conn.assigns.current_user.id
+
+    # Buscar os posts do usuário
+    posts = Posts.list_user_posts(user_id)
+
     render(conn, :index, posts: posts)
   end
 
@@ -15,6 +20,11 @@ defmodule BudgetWeb.PostController do
   end
 
   def create(conn, %{"post" => post_params}) do
+    # Pegar o ID do usuário autenticado
+    user_id = conn.assigns.current_user.id
+
+    # Inserir o user_id nos parâmetros do post
+    post_params = Map.put(post_params, "user_id", user_id)
     case Posts.create_post(post_params) do
       {:ok, post} ->
         conn
@@ -27,9 +37,26 @@ defmodule BudgetWeb.PostController do
   end
 
   def show(conn, %{"id" => id}) do
-    post = Posts.get_post!(id)
-    render(conn, :show, post: post)
+    user_id = conn.assigns.current_user.id
+
+    case Posts.get_post!(id) do
+      nil ->
+        conn
+        |> put_flash(:error, "Post não encontrado.")
+        |> redirect(to: ~p"/posts/")
+
+      %Post{} = post when post.user_id == user_id ->
+        # Post pertence ao usuário autenticado
+        render(conn, :show, post: post)
+
+      _post ->
+        # Post encontrado, mas não pertence ao usuário autenticado
+        conn
+        |> put_flash(:error, "Você não tem permissão para acessar este post.")
+        |> redirect(to: ~p"/posts/")
+    end
   end
+
 
   def edit(conn, %{"id" => id}) do
     post = Posts.get_post!(id)

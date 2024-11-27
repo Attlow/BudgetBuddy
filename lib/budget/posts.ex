@@ -101,4 +101,11 @@ defmodule Budget.Posts do
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
   end
-end
+
+  #Filtrar posts por id
+  def list_user_posts(user_id) do
+      from(p in Post, where: p.user_id == ^user_id)
+      |> Repo.all()
+
+    end
+  end

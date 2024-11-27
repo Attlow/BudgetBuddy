@@ -5,6 +5,7 @@ defmodule Budget.Posts.Post do
   schema "posts" do
     field :title, :string
     field :valor, :decimal
+    field :user_id, :id
 
     timestamps(type: :utc_datetime)
   end
@@ -12,7 +13,9 @@ defmodule Budget.Posts.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :valor])
-    |> validate_required([:title, :valor])
+    |> cast(attrs, [:title, :valor, :user_id])
+    |> validate_required([:title, :valor, :user_id])
+    |> foreign_key_constraint(:user_id)
+
   end
 end
