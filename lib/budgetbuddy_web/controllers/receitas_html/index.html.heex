@@ -1,0 +1,24 @@
+<.header>
+  Listing Receitas
+  <:actions>
+    <.link href={~p"/receitas/new"}>
+      <.button>New Receitas</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="receitas" rows={@receitas_collection} row_click={&JS.navigate(~p"/receitas/#{&1}")}>
+  <:col :let={receitas} label="Name"><%= receitas.name %></:col>
+  <:col :let={receitas} label="Valor"><%= receitas.valor %></:col>
+  <:action :let={receitas}>
+    <div class="sr-only">
+      <.link navigate={~p"/receitas/#{receitas}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/receitas/#{receitas}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={receitas}>
+    <.link href={~p"/receitas/#{receitas}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
