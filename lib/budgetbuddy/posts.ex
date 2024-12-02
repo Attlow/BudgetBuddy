@@ -107,5 +107,104 @@ defmodule Budgetbuddy.Posts do
     |> Repo.all()
   end
 
+  alias Budgetbuddy.Posts.Despesas
 
+  @doc """
+  Returns the list of despesas.
+
+  ## Examples
+
+      iex> list_despesas()
+      [%Despesas{}, ...]
+
+  """
+  def list_despesas do
+    Repo.all(Despesas)
+  end
+
+  @doc """
+  Gets a single despesas.
+
+  Raises `Ecto.NoResultsError` if the Despesas does not exist.
+
+  ## Examples
+
+      iex> get_despesas!(123)
+      %Despesas{}
+
+      iex> get_despesas!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_despesas!(id), do: Repo.get!(Despesas, id)
+
+  @doc """
+  Creates a despesas.
+
+  ## Examples
+
+      iex> create_despesas(%{field: value})
+      {:ok, %Despesas{}}
+
+      iex> create_despesas(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_despesas(attrs \\ %{}) do
+    %Despesas{}
+    |> Despesas.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a despesas.
+
+  ## Examples
+
+      iex> update_despesas(despesas, %{field: new_value})
+      {:ok, %Despesas{}}
+
+      iex> update_despesas(despesas, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_despesas(%Despesas{} = despesas, attrs) do
+    despesas
+    |> Despesas.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a despesas.
+
+  ## Examples
+
+      iex> delete_despesas(despesas)
+      {:ok, %Despesas{}}
+
+      iex> delete_despesas(despesas)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_despesas(%Despesas{} = despesas) do
+    Repo.delete(despesas)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking despesas changes.
+
+  ## Examples
+
+      iex> change_despesas(despesas)
+      %Ecto.Changeset{data: %Despesas{}}
+
+  """
+  def change_despesas(%Despesas{} = despesas, attrs \\ %{}) do
+    Despesas.changeset(despesas, attrs)
+  end
+
+  def list_user_despesas(user_id) do
+    from(d in Despesas, where: d.user_id == ^user_id)
+    |> Repo.all()
+  end
 end

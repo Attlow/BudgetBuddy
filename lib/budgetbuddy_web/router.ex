@@ -88,4 +88,10 @@ defmodule BudgetbuddyWeb.Router do
 
     resources "/receitas", ReceitasController
   end
+
+  scope "/", BudgetbuddyWeb do
+    pipe_through :browser
+
+    resources "/despesas", DespesasController
+  end
 end

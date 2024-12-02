@@ -24,55 +24,70 @@
     </div>
   </header>
   <body class="bg-white">
-    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-between w-full">
-  <%= if @current_user do %>
-    <li class="text-[1rem] leading-6 text-zinc-900">
-      <%= @current_user.name %>
-    </li>
-    <li class="ml-auto">
-      <.link
-        href={~p"/receitas"}
-        class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-      >
-        Receitas
-      </.link>
-    </li>
-    <li>
-      <.link
-        href={~p"/users/settings"}
-        class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-      >
-        Settings
-      </.link>
-    </li>
-    <li>
-      <.link
-        href={~p"/users/log_out"}
-        method="delete"
-        class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-      >
-        Log out
-      </.link>
-    </li>
-  <% else %>
-    <li>
-      <.link
-        href={~p"/users/register"}
-        class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-      >
-        Register
-      </.link>
-    </li>
-    <li>
-      <.link
-        href={~p"/users/log_in"}
-        class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-      >
-        Log in
-      </.link>
-    </li>
-  <% end %>
-</ul>
+    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 w-full">
+      <%= if @current_user do %>
+        <!-- Opções relacionadas ao usuário à esquerda -->
+        <li class="text-[1rem] leading-6 text-zinc-900">
+          <%= @current_user.name %>
+        </li>
+        <li>
+          <.link
+            href={~p"/users/settings"}
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Settings
+          </.link>
+        </li>
+        <li>
+          <.link
+            href={~p"/users/log_out"}
+            method="delete"
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Log out
+          </.link>
+        </li>
+
+        <!-- Espaçador para alinhar as próximas opções à direita -->
+        <li class="ml-auto"></li>
+
+        <!-- Opções Receitas e Despesas à direita -->
+        <li>
+          <.link
+            href={~p"/receitas"}
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Receitas
+          </.link>
+        </li>
+        <li>
+          <.link
+            href={~p"/despesas"}
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Despesas
+          </.link>
+        </li>
+      <% else %>
+        <!-- Opções para usuários não autenticados à esquerda -->
+        <li>
+          <.link
+            href={~p"/users/register"}
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Register
+          </.link>
+        </li>
+        <li>
+          <.link
+            href={~p"/users/log_in"}
+            class="text-[1.25rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            Log in
+          </.link>
+        </li>
+      <% end %>
+    </ul>
 
     <%= @inner_content %>
   </body>

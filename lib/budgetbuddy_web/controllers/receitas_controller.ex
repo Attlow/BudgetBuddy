@@ -39,15 +39,7 @@ defmodule BudgetbuddyWeb.ReceitasController do
 
   def show(conn, %{"id" => id}) do
     receitas = Posts.get_receitas!(id)
-
-    # Verifica se o usuário autenticado é o dono da receita
-    if receitas.user_id == conn.assigns.current_user.id do
-      render(conn, :show, receitas: receitas)
-    else
-      conn
-      |> put_flash(:error, "Você não tem permissão para acessar esta receita.")
-      |> redirect(to: ~p"/receitas")
-    end
+    render(conn, :show, receitas: receitas)
   end
 
 

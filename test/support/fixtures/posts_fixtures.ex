@@ -18,4 +18,19 @@ defmodule Budgetbuddy.PostsFixtures do
 
     receitas
   end
+
+  @doc """
+  Generate a despesas.
+  """
+  def despesas_fixture(attrs \\ %{}) do
+    {:ok, despesas} =
+      attrs
+      |> Enum.into(%{
+        name: "some name",
+        valor: "120.5"
+      })
+      |> Budgetbuddy.Posts.create_despesas()
+
+    despesas
+  end
 end
