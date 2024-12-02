@@ -101,4 +101,11 @@ defmodule Budgetbuddy.Posts do
   def change_receitas(%Receitas{} = receitas, attrs \\ %{}) do
     Receitas.changeset(receitas, attrs)
   end
+
+  def list_user_receitas(user_id) do
+    from(r in Receitas, where: r.user_id == ^user_id)
+    |> Repo.all()
+  end
+
+
 end

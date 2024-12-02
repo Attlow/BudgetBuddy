@@ -5,7 +5,12 @@ defmodule BudgetbuddyWeb.ReceitasController do
   alias Budgetbuddy.Posts.Receitas
 
   def index(conn, _params) do
-    receitas = Posts.list_receitas()
+    # Pegar o ID do usuário autenticado
+    user_id = conn.assigns.current_user.id
+
+    # Buscar as receitas do usuário
+    receitas = Posts.list_user_receitas(user_id)
+
     render(conn, :index, receitas_collection: receitas)
   end
 
@@ -15,21 +20,36 @@ defmodule BudgetbuddyWeb.ReceitasController do
   end
 
   def create(conn, %{"receitas" => receitas_params}) do
+    # Pegar o ID do usuário autenticado
+    user_id = conn.assigns.current_user.id
+
+    # Inserir o user_id nos parâmetros do post
+    receitas_params = Map.put(receitas_params, "user_id", user_id)
     case Posts.create_receitas(receitas_params) do
       {:ok, receitas} ->
         conn
-        |> put_flash(:info, "Receitas created successfully.")
-        |> redirect(to: ~p"/receitas/#{receitas}")
+        |> put_flash(:info, "Receita criada com sucesso.")
+        |> redirect(to: ~p"/receitas/#{receitas.id}")  # Garantir que o redirecionamento é para a receita criada
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, :new, changeset: changeset)
     end
   end
 
+
   def show(conn, %{"id" => id}) do
     receitas = Posts.get_receitas!(id)
-    render(conn, :show, receitas: receitas)
+
+    # Verifica se o usuário autenticado é o dono da receita
+    if receitas.user_id == conn.assigns.current_user.id do
+      render(conn, :show, receitas: receitas)
+    else
+      conn
+      |> put_flash(:error, "Você não tem permissão para acessar esta receita.")
+      |> redirect(to: ~p"/receitas")
+    end
   end
+
 
   def edit(conn, %{"id" => id}) do
     receitas = Posts.get_receitas!(id)
@@ -43,7 +63,7 @@ defmodule BudgetbuddyWeb.ReceitasController do
     case Posts.update_receitas(receitas, receitas_params) do
       {:ok, receitas} ->
         conn
-        |> put_flash(:info, "Receitas updated successfully.")
+        |> put_flash(:info, "Receita atualizada com sucesso.")
         |> redirect(to: ~p"/receitas/#{receitas}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -56,7 +76,7 @@ defmodule BudgetbuddyWeb.ReceitasController do
     {:ok, _receitas} = Posts.delete_receitas(receitas)
 
     conn
-    |> put_flash(:info, "Receitas deleted successfully.")
+    |> put_flash(:info, "Receita deletada com sucesso.")
     |> redirect(to: ~p"/receitas")
   end
 end
