@@ -4,6 +4,16 @@
     <.link href={~p"/receitas/new"}>
       <.button>New Receitas</.button>
     </.link>
+    <.link 
+      href={~p"/receitas?sort_by=#{if @sort_by == "asc", do: "desc", else: "asc"}"}
+      class="sort-button ml-4"
+    >
+      <%= if @sort_by == "asc" do %>
+        Ordenar por: <b>Maior Valor</b>
+      <% else %>
+        Ordenar por: <b>Menor Valor</b>
+      <% end %>
+    </.link>
   </:actions>
 </.header>
 

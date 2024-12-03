@@ -4,15 +4,21 @@ defmodule BudgetbuddyWeb.DespesasController do
   alias Budgetbuddy.Posts
   alias Budgetbuddy.Posts.Despesas
 
-  def index(conn, _params) do
-    # Pegar o ID do usuário autenticado
+  def index(conn, params) do
     user_id = conn.assigns.current_user.id
 
-    # Buscar as despesas do usuário
     despesas = Posts.list_user_despesas(user_id)
 
-    render(conn, :index, despesas_collection: despesas)
-  end
+    sort_by = Map.get(params, "sort_by", "asc")
+    despesas_sorted =
+      case sort_by do
+        "asc" -> Enum.sort_by(despesas, & &1.valor)
+        "desc" -> Enum.sort_by(despesas, & &1.valor, :desc)
+        _ -> despesas
+      end
+
+    render(conn, :index, despesas_collection: despesas_sorted, sort_by: sort_by)
+    end
 
   def new(conn, _params) do
     changeset = Posts.change_despesas(%Despesas{})
@@ -23,14 +29,13 @@ defmodule BudgetbuddyWeb.DespesasController do
     # Pegar o ID do usuário autenticado
     user_id = conn.assigns.current_user.id
 
-    # Inserir o user_id nos parâmetros do post
     despesas_params = Map.put(despesas_params, "user_id", user_id)
 
     case Posts.create_despesas(despesas_params) do
       {:ok, despesas} ->
         conn
         |> put_flash(:info, "Despesa criada com sucesso.")
-        |> redirect(to: ~p"/despesas/#{despesas.id}")  # Garantir que o redirecionamento é para a despesa criada
+        |> redirect(to: ~p"/despesas/#{despesas.id}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, :new, changeset: changeset)

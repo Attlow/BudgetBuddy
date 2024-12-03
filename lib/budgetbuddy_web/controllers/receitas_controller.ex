@@ -4,15 +4,21 @@ defmodule BudgetbuddyWeb.ReceitasController do
   alias Budgetbuddy.Posts
   alias Budgetbuddy.Posts.Receitas
 
-  def index(conn, _params) do
-    # Pegar o ID do usuário autenticado
-    user_id = conn.assigns.current_user.id
+  def index(conn, params) do
+  user_id = conn.assigns.current_user.id
 
-    # Buscar as receitas do usuário
-    receitas = Posts.list_user_receitas(user_id)
+  receitas = Posts.list_user_receitas(user_id)
 
-    render(conn, :index, receitas_collection: receitas)
-  end
+  sort_by = Map.get(params, "sort_by", "asc")
+  receitas_sorted =
+    case sort_by do
+      "asc" -> Enum.sort_by(receitas, & &1.valor)
+      "desc" -> Enum.sort_by(receitas, & &1.valor, :desc)
+      _ -> receitas
+    end
+
+  render(conn, :index, receitas_collection: receitas_sorted, sort_by: sort_by)
+end
 
   def new(conn, _params) do
     changeset = Posts.change_receitas(%Receitas{})
@@ -20,16 +26,14 @@ defmodule BudgetbuddyWeb.ReceitasController do
   end
 
   def create(conn, %{"receitas" => receitas_params}) do
-    # Pegar o ID do usuário autenticado
     user_id = conn.assigns.current_user.id
 
-    # Inserir o user_id nos parâmetros do post
     receitas_params = Map.put(receitas_params, "user_id", user_id)
     case Posts.create_receitas(receitas_params) do
       {:ok, receitas} ->
         conn
         |> put_flash(:info, "Receita criada com sucesso.")
-        |> redirect(to: ~p"/receitas/#{receitas.id}")  # Garantir que o redirecionamento é para a receita criada
+        |> redirect(to: ~p"/receitas/#{receitas.id}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, :new, changeset: changeset)
